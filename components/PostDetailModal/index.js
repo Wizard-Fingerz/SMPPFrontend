@@ -87,18 +87,26 @@ const PostDetailModal = ({ open, onClose, post }) => {
           return (
             <div key={index} style={{ marginTop: '16px' }}>
               {isImage ? (
-                <div style={{ position: 'relative', width: '100%', height: 'auto', overflow: 'hidden' }}>
-                <Image
-                  src={media.file}
-                  alt="Post media"
-                  layout="fill" // Make the image fill the container
-                  objectFit="cover" // Adjust the image to cover the container
-                  onError={(e) => {
-                    console.error('Image failed to load', e);
-                    console.log(`Failed image URL: ${media.file}`);
+                <Box
+                  sx={{
+                    position: 'relative',
+                    width: '100%',
+                    height: 'auto',
+                    paddingBottom: '56.25%', // Maintain 16:9 aspect ratio
+                    backgroundColor: '#f0f0f0', // Background color to show while loading
                   }}
-                />
-              </div>
+                >
+                  <Image
+                    src={media.file}
+                    alt="Post media"
+                    layout="fill"
+                    objectFit="contain"
+                    onError={(e) => {
+                      console.error('Image failed to load', e);
+                      console.log(`Failed image URL: ${media.file}`);
+                    }}
+                  />
+                </Box>
               ) : isVideo ? (
                 <video
                   src={media.file}
