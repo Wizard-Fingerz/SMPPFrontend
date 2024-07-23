@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 import {
   Container,
@@ -15,15 +16,47 @@ import GoogleIcon from '@mui/icons-material/Google';
 import AppleIcon from '@mui/icons-material/Apple';
 import logo from '../assets/logo.png';
 import Image from 'next/image';
+import { API_BASE_URL } from './constants';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
+  const [email_or_username, setEmailOrUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle login logic here
+  const router = useRouter();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Prevent default form submission behavior
+    // Prepare the login data
+    const formData = new FormData();
+    formData.append('username', email_or_username);
+    formData.append('password', password);
+
+    // Send a POST request to your Django API endpoint
+    try {
+      const response = await fetch(`${API_BASE_URL}/login/`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        // Display the token in the console
+        console.log('Token:', data.token);
+        // Save the token to the local storage
+        localStorage.setItem('token', data.token);
+        router.push('/');
+      } else {
+        // Handle login failure
+        const errorData = await response.json();
+        console.error('Login failed:', errorData);
+        alert('Incorrect Login details.');
+      }
+    } catch (error) {
+      // Handle network or request error
+      alert('Login Error, please try again.');
+      console.error('Network error:', error);
+    }
   };
 
   const handleClickShowPassword = () => {
@@ -34,7 +67,7 @@ const Login = () => {
     <Container maxWidth="sm">
       <Box sx={{ mt: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <Image src={logo} alt='SMPP Logo' width={120} height={120} />
-        
+
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
@@ -48,12 +81,12 @@ const Login = () => {
             required
             fullWidth
             id="email"
-            label="Email or Phone"
+            label="Email or Phone Number"
             name="email"
             autoComplete="email"
             autoFocus
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={email_or_username}
+            onChange={(e) => setEmailOrUsername(e.target.value)}
           />
           <TextField
             variant="outlined"

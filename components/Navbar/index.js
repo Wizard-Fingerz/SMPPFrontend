@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { AppBar, Toolbar, IconButton, Typography, InputBase, Box, Avatar, Drawer, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import HomeIcon from '@mui/icons-material/Home';
@@ -10,9 +10,16 @@ import MenuIcon from '@mui/icons-material/Menu';
 import logo from '/assets/logo.png';
 import Image from 'next/image';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { UserContext } from '../../context/UserContext';  // Adjust the import path
 import { useTheme } from '@mui/material/styles';
 
 const Navbar = () => {
+    const { user } = useContext(UserContext);
+
+    if (!user) {
+      return <Typography>Loading...</Typography>;
+    }
+  
     const [drawerOpen, setDrawerOpen] = useState(false);
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -79,15 +86,27 @@ const Navbar = () => {
                                 </IconButton>
                                 <div>My Network</div>
                             </div>
-                            <IconButton color="inherit">
-                                <WorkIcon />
-                            </IconButton>
-                            <IconButton color="inherit">
-                                <ChatIcon />
-                            </IconButton>
-                            <IconButton color="inherit">
-                                <NotificationsIcon />
-                            </IconButton>
+                            <div>
+
+                                <IconButton color="inherit">
+                                    <WorkIcon />
+                                </IconButton>
+                                <div>Job</div>
+                            </div>
+                            <div>
+
+                                <IconButton color="inherit">
+                                    <ChatIcon />
+                                </IconButton>
+                                <div>Chat</div>
+                            </div>
+                            <div>
+
+                                <IconButton color="inherit">
+                                    <NotificationsIcon />
+                                </IconButton>
+                                <div>Notification</div>
+                            </div>
                         </>
                     ) : (
                         <IconButton color="inherit" onClick={toggleDrawer(true)}>
@@ -96,7 +115,9 @@ const Navbar = () => {
                     )}
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Avatar alt="User Avatar" src="/assets/user-avatar.jpg" />
+                    <Avatar alt={user.first_name}
+                               src={user.profile.image || '/assets/profile-avatar.jpg'}
+                    />
                 </Box>
             </Toolbar>
             <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)}>

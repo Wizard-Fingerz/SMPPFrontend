@@ -1,18 +1,25 @@
-import React from 'react';
-import { Box, Typography, Button, Card, CardContent, Avatar } from '@mui/material';
-import logo from '/assets/logo.png';
+import React, { useContext } from 'react';
+import { Box, Typography, Button, Card, CardContent } from '@mui/material';
 import Image from 'next/image';
+import { UserContext } from '../../context/UserContext';  // Adjust the import path
+import logo from '/assets/logo.png';
 
 const RightSidebar = () => {
+  const { user } = useContext(UserContext);
+
+  if (!user) {
+    return <Typography>Loading...</Typography>;
+  }
+
   return (
     <Box sx={{ position: 'sticky', top: '70px' }}>
       <Card sx={{ mb: 2 }}>
         <CardContent>
           <Typography variant="h6">
-            Adewale, candidates are ready when you are.
+            {user.first_name}, share what's on your mind with others.
           </Typography>
-          <Button variant="contained" color="primary" fullWidth>
-            Start job post
+          <Button href='create-post/' variant="contained" color="primary" fullWidth>
+            Create post
           </Button>
         </CardContent>
       </Card>

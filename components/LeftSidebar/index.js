@@ -1,27 +1,34 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Box, Typography, List, ListItem, ListItemText, Divider, Avatar } from '@mui/material';
+import { UserContext } from '../../context/UserContext';  // Adjust the import path
 
 const LeftSidebar = () => {
+  const { user } = useContext(UserContext);
+
+  if (!user) {
+    return <Typography>Please wait...</Typography>;
+  }
+
   return (
     <Box sx={{ position: 'sticky', top: '70px' }}>
       <Box sx={{ textAlign: 'center', p: 2 }}>
         <Avatar
-          alt="Adewale Oladiti"
-          src="/assets/profile-avatar.jpg"
+          alt={user.first_name}
+          src={user.profile.image || '/assets/profile-avatar.jpg'}
           sx={{ width: 80, height: 80, mx: 'auto', mb: 2 }}
         />
-        <Typography variant="h6">Adewale Oladiti</Typography>
+        <Typography variant="h6">{user.first_name} {user.last_name}</Typography>
         <Typography variant="body2">
-          Software Engineer | Backend Engineer (Django) | GDSC FTU Web lead | Tech U NACOS President | Founder of ETL COMMUNITY | Content Creator and Researcher.
+          {user.profile.bio}
         </Typography>
       </Box>
       <Divider />
       <List>
         <ListItem>
-          <ListItemText primary="Profile viewers" secondary="34" />
+          <ListItemText primary="Profile viewers" secondary={user.profile.sticker_count} />
         </ListItem>
         <ListItem>
-          <ListItemText primary="Post impressions" secondary="57" />
+          <ListItemText primary="Post impressions" secondary={user.profile.sticking_count} />
         </ListItem>
       </List>
       <Divider />
@@ -29,21 +36,11 @@ const LeftSidebar = () => {
         Recent
       </Typography>
       <List>
-        <ListItem>
-          <ListItemText primary="#agrictech" />
-        </ListItem>
-        <ListItem>
-          <ListItemText primary="#visualdata" />
-        </ListItem>
-        <ListItem>
-          <ListItemText primary="#automatedweedmanagement" />
-        </ListItem>
-        <ListItem>
-          <ListItemText primary="#fruit Import and export" />
-        </ListItem>
-        <ListItem>
-          <ListItemText primary="#Africa Trading Platform" />
-        </ListItem>
+        {user.profile.recent_hashtags.map((hashtag, index) => (
+          <ListItem key={index}>
+            <ListItemText primary={hashtag} />
+          </ListItem>
+        ))}
       </List>
     </Box>
   );

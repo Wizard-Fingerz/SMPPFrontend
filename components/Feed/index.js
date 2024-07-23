@@ -1,121 +1,160 @@
-import { Box, Card, CardHeader, CardContent, Typography, Avatar, CardMedia, Button, IconButton } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, Card, CardHeader, CardContent, Typography, Avatar, Button, CardMedia } from '@mui/material';
 import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
 import ShareIcon from '@mui/icons-material/Share';
 import CommentIcon from '@mui/icons-material/Comment';
-
-const posts = [
-  {
-    id: 1,
-    user: {
-      name: 'John J.D. S.',
-      avatar: '/john-avatar.jpg',
-      title: 'Start-up & Founder Advisor and Venture Builder',
-    },
-    content: 'Agricultural production is more than sowing seeds...',
-    media: {
-      type: 'video',
-      url: '/river-crabs-video.mp4',
-    },
-    createdAt: '1h',
-    reactions: 120,
-    comments: 8,
-    shares: 2,
-  }, {
-    id: 1,
-    user: {
-      name: 'John J.D. S.',
-      avatar: '/john-avatar.jpg',
-      title: 'Start-up & Founder Advisor and Venture Builder',
-    },
-    content: 'Agricultural production is more than sowing seeds...',
-    media: {
-      type: 'video',
-      url: '/river-crabs-video.mp4',
-    },
-    createdAt: '1h',
-    reactions: 120,
-    comments: 8,
-    shares: 2,
-  }, {
-    id: 1,
-    user: {
-      name: 'John J.D. S.',
-      avatar: '/john-avatar.jpg',
-      title: 'Start-up & Founder Advisor and Venture Builder',
-    },
-    content: 'Agricultural production is more than sowing seeds...',
-    media: {
-      type: 'video',
-      url: '/river-crabs-video.mp4',
-    },
-    createdAt: '1h',
-    reactions: 120,
-    comments: 8,
-    shares: 2,
-  },
-  {
-    id: 2,
-    user: {
-      name: 'SEEMA YADAV',
-      avatar: '/seema-avatar.jpg',
-      title: 'Science Educator',
-    },
-    content: 'Innovative farmers have discovered an eco-friendly method...',
-    media: {
-      type: 'image',
-      url: '/crabs-image.jpg',
-    },
-    createdAt: '3h',
-    reactions: 85,
-    comments: 15,
-    shares: 3,
-  },
-];
+import PostDetailModal from '../PostDetailModal'; // Import the PostDetailModal component
+import { API_BASE_URL } from '../../pages/constants';  // Adjust the import path
+import { format } from 'date-fns';  // Import date-fns
 
 const Feed = () => {
+  const [posts, setPosts] = useState([]);
+  const [selectedPost, setSelectedPost] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [expandedPosts, setExpandedPosts] = useState({}); // State to manage expanded posts
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/feed/post-feeds`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Token ${localStorage.getItem('token')}`,
+      },
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Fetched posts data:', data); // Log the data to check if media is included
+        setPosts(data);
+      })
+      .catch(error => console.error('Error fetching posts:', error));
+  }, []);
+
+  const handleToggleContent = (postId) => {
+    setExpandedPosts((prev) => ({
+      ...prev,
+      [postId]: !prev[postId],
+    }));
+  };
+
+  const truncateContent = (content, wordLimit) => {
+    const words = content.split(' ');
+    if (words.length <= wordLimit) {
+      return content;
+    }
+    return words.slice(0, wordLimit).join(' ') + '...';
+  };
+
+  const handleOpenModal = (post) => {
+    setSelectedPost(post);
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setSelectedPost(null);
+  };
+
+  const formatDate = (timestamp) => {
+    const date = new Date(timestamp);
+    if (isNaN(date.getTime())) {
+      return 'Invalid Date'; // Handle invalid dates
+    }
+    return format(date, 'MMMM d, yyyy h:mm a');
+  };
+
+  if (!Array.isArray(posts)) {
+    return <div>Please login to view posts...</div>;
+  }
+
   return (
     <Box>
-      {posts.map((post) => (
-        <Card key={post.id} sx={{ mb: 2, boxShadow: 3, borderRadius: 2 }}>
-          <CardHeader
-            avatar={<Avatar src={post.user.avatar} />}
-            title={`${post.user.name} • ${post.user.title}`}
-            subheader={post.createdAt}
-          />
-          {post.media && (
-            <CardMedia
-              component={post.media.type === 'image' ? 'img' : 'video'}
-              image={post.media.url}
-              alt="Post media"
-              controls={post.media.type === 'video'}
-              sx={{ height: post.media.type === 'image' ? '200px' : 'auto' }}
+      {posts.map((post) => {
+        const isExpanded = expandedPosts[post.id];
+        const truncatedContent = truncateContent(post.content, 30);
+
+        return (
+          <Card key={post.id} sx={{ mb: 2, boxShadow: 3, borderRadius: 2 }}>
+            <CardHeader
+              avatar={<Avatar src={post.user.avatar} />}
+              title={`${post.user.first_name} ${post.user.last_name}`}
+              subheader={formatDate(post.timestamp)} // Format the timestamp
             />
-          )}
-          <CardContent>
-            <Typography variant="body1">{post.content}</Typography>
-          </CardContent>
-          <Box display="flex" justifyContent="space-between" sx={{ padding: '0 16px 16px' }}>
-            <Box display="flex" alignItems="center">
-              <ThumbUpAltIcon color="primary" />
-              <Typography variant="body2" sx={{ marginLeft: 1 }}>
-                {post.reactions}
+              {post.media && post.media.map((media, index) => {
+                const isImage = media.file && media.file.toLowerCase().match(/\.(jpg|jpeg|png|gif)$/);
+                const isVideo = media.file && media.file.toLowerCase().match(/\.(mp4|mov|webm|ogg)$/);
+
+                return (
+                  <div key={index}>
+                    {isImage ? (
+                      <img
+                        src={media.file}
+                        alt="Post media"
+                        style={{ maxWidth: '100%', height: 'auto' }}
+                        onError={(e) => {
+                          console.error('Image failed to load', e);
+                          console.log(`Failed image URL: ${media.file}`);
+                        }}
+                      />
+                    ) : isVideo ? (
+                      <video
+                        src={media.file}
+                        controls
+                        style={{ width: '100%', height: 'auto' }}
+                        onContextMenu={(e) => e.preventDefault()} // Disable right-click context menu
+                        onError={(e) => {
+                          console.error('Video failed to load', e);
+                          console.log(`Failed video URL: ${media.file}`);
+                        }}
+                      />
+                    ) : (
+                      <Typography variant="body2" color="error">
+                        Unsupported media type: {media.file ? media.file.split('.').pop() : 'unknown'}
+                      </Typography>
+                    )}
+                  </div>
+                );
+              })}
+
+
+            <CardContent>
+              <Typography variant="body1" sx={{ mt: 2 }}>
+                {isExpanded ? post.content : truncatedContent}
+                <Button onClick={() => handleToggleContent(post.id)} sx={{ ml: 1 }}>
+                  {isExpanded ? 'See less' : 'See more'}
+                </Button>
               </Typography>
+
+              <Typography variant="body1" color='blue'>{post.hashtag}</Typography>
+              <Typography variant="body1" color='blue'>{post.url}</Typography>
+            </CardContent>
+            <Box display="flex" justifyContent="space-between" sx={{ padding: '0 16px 16px' }}>
+              <Box display="flex" alignItems="center">
+                <ThumbUpAltIcon color="primary" />
+                <Typography variant="body2" sx={{ marginLeft: 1 }}>
+                  {post.reaction ? post.reaction.count : 0}
+                </Typography>
+              </Box>
+              <Box display="flex" alignItems="center">
+                <CommentIcon color="action" />
+                <Typography variant="body2" sx={{ marginLeft: 1 }}>
+                  {post.comments ? post.comments.length : 0} Comments
+                </Typography>
+              </Box>
+              <Box display="flex" alignItems="center">
+                <ShareIcon color="action" />
+                <Typography variant="body2" sx={{ marginLeft: 1 }}>
+                  {post.shares ? post.shares.length : 0} Shares
+                </Typography>
+              </Box>
+              <Button onClick={() => handleOpenModal(post)} variant="outlined" sx={{ mt: 2 }}>
+                View Details
+              </Button>
             </Box>
-            <Box display="flex" alignItems="center">
-              <CommentIcon color="action" />
-              <Typography variant="body2" sx={{ marginLeft: 1 }}>
-                {post.comments} Comments
-              </Typography>
-            </Box>
-            <Box display="flex" alignItems="center">
-              <ShareIcon color="action" />
-              <Typography variant="body2" sx={{ marginLeft: 1 }}>
-                {post.shares} Shares
-              </Typography>
-            </Box>
-          </Box>
-        </Card>
-      ))}
+          </Card>
+        );
+      })}
+      {selectedPost && (
+        <PostDetailModal open={modalOpen} onClose={handleCloseModal} post={selectedPost} />
+      )}
     </Box>
   );
 };
