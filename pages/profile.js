@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Container, Typography } from '@mui/material';
+import { Container, Typography, Box } from '@mui/material';
 import Post from '../components/Post';
 
 const Profile = () => {
