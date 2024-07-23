@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, IconButton, Typography, Button, Box } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import Image from 'next/image';
 import { API_BASE_URL } from '../../pages/constants';  // Adjust the import path
 
 const PostDetailModal = ({ open, onClose, post }) => {
@@ -86,10 +87,12 @@ const PostDetailModal = ({ open, onClose, post }) => {
           return (
             <div key={index} style={{ marginTop: '16px' }}>
               {isImage ? (
-                <img
+                <Image
                   src={media.file}
                   alt="Post media"
-                  style={{ maxWidth: '100%', height: 'auto' }}
+                  width={600}  // Specify width
+                  height={400} // Specify height
+                  objectFit="cover" // Adjust object-fit as needed
                   onError={(e) => {
                     console.error('Image failed to load', e);
                     console.log(`Failed image URL: ${media.file}`);

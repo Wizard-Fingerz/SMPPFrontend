@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Card, CardHeader, CardContent, Typography, Avatar, Button, CardMedia } from '@mui/material';
+import { Box, Card, CardHeader, CardContent, Typography, Avatar, Button } from '@mui/material';
 import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
 import ShareIcon from '@mui/icons-material/Share';
 import CommentIcon from '@mui/icons-material/Comment';
 import PostDetailModal from '../PostDetailModal'; // Import the PostDetailModal component
 import { API_BASE_URL } from '../../pages/constants';  // Adjust the import path
 import { format } from 'date-fns';  // Import date-fns
+import Image from 'next/image';
 
 const Feed = () => {
   const [posts, setPosts] = useState([]);
@@ -62,7 +63,7 @@ const Feed = () => {
   };
 
   if (!Array.isArray(posts)) {
-    return <div>Please login to view posts...</div>;
+    return <div></div>;
   }
 
   return (
@@ -78,42 +79,43 @@ const Feed = () => {
               title={`${post.user.first_name} ${post.user.last_name}`}
               subheader={formatDate(post.timestamp)} // Format the timestamp
             />
-              {post.media && post.media.map((media, index) => {
-                const isImage = media.file && media.file.toLowerCase().match(/\.(jpg|jpeg|png|gif)$/);
-                const isVideo = media.file && media.file.toLowerCase().match(/\.(mp4|mov|webm|ogg)$/);
+            {post.media && post.media.map((media, index) => {
+              const isImage = media.file && media.file.toLowerCase().match(/\.(jpg|jpeg|png|gif)$/);
+              const isVideo = media.file && media.file.toLowerCase().match(/\.(mp4|mov|webm|ogg)$/);
 
-                return (
-                  <div key={index}>
-                    {isImage ? (
-                      <img
-                        src={media.file}
-                        alt="Post media"
-                        style={{ maxWidth: '100%', height: 'auto' }}
-                        onError={(e) => {
-                          console.error('Image failed to load', e);
-                          console.log(`Failed image URL: ${media.file}`);
-                        }}
-                      />
-                    ) : isVideo ? (
-                      <video
-                        src={media.file}
-                        controls
-                        style={{ width: '100%', height: 'auto' }}
-                        onContextMenu={(e) => e.preventDefault()} // Disable right-click context menu
-                        onError={(e) => {
-                          console.error('Video failed to load', e);
-                          console.log(`Failed video URL: ${media.file}`);
-                        }}
-                      />
-                    ) : (
-                      <Typography variant="body2" color="error">
-                        Unsupported media type: {media.file ? media.file.split('.').pop() : 'unknown'}
-                      </Typography>
-                    )}
-                  </div>
-                );
-              })}
-
+              return (
+                <div key={index}>
+                  {isImage ? (
+                    <Image
+                      src={media.file}
+                      alt="Post media"
+                      width={600}  // Specify width
+                      height={400} // Specify height
+                      objectFit="cover" // Adjust object-fit as needed
+                      onError={(e) => {
+                        console.error('Image failed to load', e);
+                        console.log(`Failed image URL: ${media.file}`);
+                      }}
+                    />
+                  ) : isVideo ? (
+                    <video
+                      src={media.file}
+                      controls
+                      style={{ width: '100%', height: 'auto' }}
+                      onContextMenu={(e) => e.preventDefault()} // Disable right-click context menu
+                      onError={(e) => {
+                        console.error('Video failed to load', e);
+                        console.log(`Failed video URL: ${media.file}`);
+                      }}
+                    />
+                  ) : (
+                    <Typography variant="body2" color="error">
+                      Unsupported media type: {media.file ? media.file.split('.').pop() : 'unknown'}
+                    </Typography>
+                  )}
+                </div>
+              );
+            })}
 
             <CardContent>
               <Typography variant="body1" sx={{ mt: 2 }}>

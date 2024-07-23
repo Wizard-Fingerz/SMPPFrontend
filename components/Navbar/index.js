@@ -17,7 +17,7 @@ const Navbar = () => {
     const { user } = useContext(UserContext);
 
     if (!user) {
-      return <Typography>Loading...</Typography>;
+      return <Box></Box>;
     }
   
     const [drawerOpen, setDrawerOpen] = useState(false);

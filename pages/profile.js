@@ -21,13 +21,13 @@ const Profile = () => {
   }, []);
 
   if (!profile) {
-    return <Typography>Loading...</Typography>;
+    return <Box></Box>;
   }
 
   return (
     <Container maxWidth="md">
       <Typography variant="h4" component="h1" gutterBottom>
-        {profile.name}'s Profile
+        {profile.name}&apos;s Profile
       </Typography>
       {/* Display user profile information */}
       <Typography variant="body1" component="p">
