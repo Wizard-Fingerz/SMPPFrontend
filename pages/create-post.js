@@ -18,7 +18,7 @@ import {
 } from '@mui/material';
 import logo from '../assets/logo.png';
 import Image from 'next/image';
-import { API_BASE_URL } from './constants';
+import { API_BASE_URL } from '../utils/constants';
 
 const CreatePost = () => {
   const [content, setContent] = useState('');

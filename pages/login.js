@@ -16,7 +16,7 @@ import GoogleIcon from '@mui/icons-material/Google';
 import AppleIcon from '@mui/icons-material/Apple';
 import logo from '../assets/logo.png';
 import Image from 'next/image';
-import { API_BASE_URL } from './constants';
+import { API_BASE_URL } from '../utils/constants';
 
 const Login = () => {
   const [email_or_username, setEmailOrUsername] = useState('');

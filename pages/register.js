@@ -6,7 +6,7 @@ import GoogleIcon from '@mui/icons-material/Google';
 import logo from '../assets/logo.png';
 import Image from 'next/image';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { API_BASE_URL } from './constants';
+import { API_BASE_URL } from '../utils/constants';
 
 const RegisterForm = () => {
   const [email_or_phone_number, setEmailOrPhoneNumber] = useState('');

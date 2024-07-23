@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, IconButton, Typography, Button, Box } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import Image from 'next/image';
-import { API_BASE_URL } from '../../pages/constants';  // Adjust the import path
+import { API_BASE_URL } from '../../utils/constants';  // Adjust the import path
 
 const PostDetailModal = ({ open, onClose, post }) => {
   const [showFullContent, setShowFullContent] = useState(false);

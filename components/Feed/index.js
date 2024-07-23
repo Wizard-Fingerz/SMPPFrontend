@@ -4,7 +4,7 @@ import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
 import ShareIcon from '@mui/icons-material/Share';
 import CommentIcon from '@mui/icons-material/Comment';
 import PostDetailModal from '../PostDetailModal'; // Import the PostDetailModal component
-import { API_BASE_URL } from '../../pages/constants';  // Adjust the import path
+import { API_BASE_URL } from '../../utils/constants';  // Adjust the import path
 import { format } from 'date-fns';  // Import date-fns
 import Image from 'next/image';
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { TextField, Button, Typography, Box, Grid, Container, MenuItem, Avatar } from '@mui/material';
 import logo from '../assets/logo.png';
 import Image from 'next/image';
-import { API_BASE_URL } from './constants';
+import { API_BASE_URL } from '../utils/constants';
 import { useRouter } from 'next/router';
 
 const RELIGION_CHOICES = [

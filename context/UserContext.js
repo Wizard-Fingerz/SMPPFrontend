@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
-import { API_BASE_URL } from '../pages/constants';  // Adjust the import path
+import { API_BASE_URL } from '../utils/constants';  // Adjust the import path
 
 export const UserContext = createContext();
 
