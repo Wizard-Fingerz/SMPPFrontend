@@ -139,13 +139,13 @@ const Feed = () => {
               <Box display="flex" alignItems="center">
                 <CommentIcon color="action" />
                 <Typography variant="body2" sx={{ marginLeft: 1 }}>
-                  {post.comments ? post.comments.length : 0} Comments
+                  {post.comments ? post.comments.length : 0}
                 </Typography>
               </Box>
               <Box display="flex" alignItems="center">
                 <ShareIcon color="action" />
                 <Typography variant="body2" sx={{ marginLeft: 1 }}>
-                  {post.shares ? post.shares.length : 0} Shares
+                  {post.shares ? post.shares.length : 0}
                 </Typography>
               </Box>
               <Button onClick={() => handleOpenModal(post)} variant="outlined" sx={{ mt: 2 }}>
