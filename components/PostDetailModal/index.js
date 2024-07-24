@@ -140,3 +140,4 @@ const PostDetailModal = ({ open, onClose, post }) => {
 };
 
 export default PostDetailModal;
+
