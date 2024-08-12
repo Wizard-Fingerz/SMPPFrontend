@@ -37,6 +37,9 @@ const PostDetailModal = ({ open, onClose, post }) => {
         throw new Error('Network response was not ok');
       }
 
+      const contentType = response.headers.get('Content-Type');
+      console.log(`Content-Type: ${contentType}`); // Log the content type for debugging
+
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -56,6 +59,7 @@ const PostDetailModal = ({ open, onClose, post }) => {
       document.body.appendChild(link);
       link.click();
       link.remove();
+      window.URL.revokeObjectURL(url); // Clean up the object URL
     } catch (error) {
       console.error('Error downloading the file:', error);
     }
@@ -150,9 +154,9 @@ const PostDetailModal = ({ open, onClose, post }) => {
                   Unsupported media type: {media.file ? media.file.split('.').pop() : 'unknown'}
                 </Typography>
               )}
-              <Button 
-                variant="contained" 
-                color="primary" 
+              <Button
+                variant="contained"
+                color="primary"
                 onClick={() => handleDownload(media.id)}
                 sx={{ mt: 2 }}
               >
