@@ -14,7 +14,10 @@ import {
   FormControlLabel,
   Select,
   MenuItem,
-  Chip
+  Chip,
+  RadioGroup,
+  FormControlLabel as RadioFormControlLabel,
+  Radio
 } from '@mui/material';
 import logo from '../assets/logo.png';
 import Image from 'next/image';
@@ -29,11 +32,11 @@ const CreatePost = () => {
   const [media, setMedia] = useState(null);
   const [taggedUsers, setTaggedUsers] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
+  const [sensitivity, setSensitivity] = useState('low'); // State for sensitivity level
   const [errors, setErrors] = useState({});
   const router = useRouter();
 
   useEffect(() => {
-    // Fetch the users from the backend
     const fetchUsers = async () => {
       try {
         const response = await fetch(`${API_BASE_URL}/users/`, {
@@ -43,7 +46,6 @@ const CreatePost = () => {
         });
         if (response.ok) {
           const data = await response.json();
-          console.log(data);
           setAllUsers(data);
         } else {
           console.error('Failed to fetch users');
@@ -61,7 +63,6 @@ const CreatePost = () => {
       target: { value },
     } = event;
     setTaggedUsers(
-      // On autofill we get a stringified value.
       typeof value === 'string' ? value.split(',') : value,
     );
   };
@@ -75,6 +76,7 @@ const CreatePost = () => {
     formData.append('hashtag', hashtag);
     formData.append('is_business_post', isBusinessPost);
     formData.append('is_personal_post', isPersonalPost);
+    formData.append('sensitivity', sensitivity); // Add sensitivity
     formData.append('tagged_users', JSON.stringify(taggedUsers)); // Assuming it's an array of user IDs
     if (media) {
       formData.append('media', media);
@@ -116,7 +118,7 @@ const CreatePost = () => {
             Let your friend get to know more about you!
           </Typography>
         </Box>
-        <form onSubmit={handleSubmit} style={{ width: '100%', marginTop: 1 }}> {/* Corrected marginTop property */}
+        <form onSubmit={handleSubmit} style={{ width: '100%', marginTop: 1 }}>
           <TextField
             variant="outlined"
             margin="normal"
@@ -165,8 +167,21 @@ const CreatePost = () => {
             control={<Switch checked={isPersonalPost} onChange={(e) => setIsPersonalPost(e.target.checked)} />}
             label="Personal Post"
           />
+          <FormControl component="fieldset" margin="normal">
+            <Typography variant="h6">Sensitivity Level</Typography>
+            <RadioGroup
+              aria-label="sensitivity"
+              name="sensitivity"
+              value={sensitivity}
+              onChange={(e) => setSensitivity(e.target.value)}
+              row
+            >
+              <FormControlLabel value="low" control={<Radio />} label="Low" />
+              <FormControlLabel value="medium" control={<Radio />} label="Medium" />
+              <FormControlLabel value="high" control={<Radio />} label="High" />
+            </RadioGroup>
+          </FormControl>
           <FormControl fullWidth margin="normal">
-            {/* <InputLabel htmlFor="media">Media File</InputLabel> */}
             <Input
               id="media"
               name="media"
@@ -204,7 +219,7 @@ const CreatePost = () => {
             fullWidth
             variant="contained"
             color="primary"
-            sx={{ marginTop: 3, marginBottom: 2 }} 
+            sx={{ marginTop: 3, marginBottom: 2 }}
           >
             Create Post
           </Button>

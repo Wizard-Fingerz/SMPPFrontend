@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 
 const RELIGION_CHOICES = [
   { value: 'Christianity', label: 'Christianity' },
-  { value: 'Muslim', label: 'Muslim' },
+  { value: 'Islam', label: 'Islam' },
   { value: 'Indigenous', label: 'Indigenous' },
   { value: 'Others', label: 'Others' },
 ];

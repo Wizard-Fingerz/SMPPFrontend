@@ -13,6 +13,7 @@ const Feed = () => {
   const [selectedPost, setSelectedPost] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [expandedPosts, setExpandedPosts] = useState({}); // State to manage expanded posts
+  const [hoveredImage, setHoveredImage] = useState(null); // State to manage hovered image
 
   useEffect(() => {
     fetch(`${API_BASE_URL}/feed/post-feeds`, {
@@ -94,9 +95,11 @@ const Feed = () => {
                         paddingBottom: '56.25%', // Maintain 16:9 aspect ratio
                         backgroundColor: '#f0f0f0', // Background color to show while loading
                       }}
+                      onMouseEnter={() => setHoveredImage(media.file)}
+                      onMouseLeave={() => setHoveredImage(null)}
                     >
                       <Image
-                        src={media.file}
+                        src={(media.is_sensitive && !hoveredImage) ? media.blurred_image : media.file}
                         alt="Post media"
                         layout="fill"
                         objectFit="contain"
@@ -105,6 +108,30 @@ const Feed = () => {
                           console.log(`Failed image URL: ${media.file}`);
                         }}
                       />
+                      {media.is_sensitive && !hoveredImage && (
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            width: '100%',
+                            height: '100%',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                            color: 'white',
+                            textAlign: 'center',
+                            cursor: 'pointer',
+                            zIndex: 1,
+                          }}
+                          onMouseDown={() => setHoveredImage(media.file)}
+                          onMouseUp={() => setHoveredImage(null)}
+                        >
+                          Press and hold to view original
+                        </Typography>
+                      )}
                     </Box>
                   ) : isVideo ? (
                     <video
